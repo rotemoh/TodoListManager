@@ -9,26 +9,25 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="todolist.huji.ac.il.todolistmanager.TodoListManagerActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Item:" />
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Item:" />-->
 
-    <EditText
-        android:layout_width="145sp"
-        android:layout_height="wrap_content"
-        android:id="@+id/edtNewItem"
-        android:textColor="#4759b7"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:background="#c4f5f3" />
+    <!--<EditText-->
+        <!--android:layout_width="145sp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/edtNewItem"-->
+        <!--android:textColor="#4759b7"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:background="#c4f5f3" />-->
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/listView"
-        android:layout_below="@+id/edtNewItem"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="36dp" />
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

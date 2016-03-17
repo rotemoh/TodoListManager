@@ -7,6 +7,13 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete"
-        android:id="@+id/deleteBtn" />
+        android:text="Delete Item"
+        android:id="@+id/menuItemDelete" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:visibility="gone"
+        android:id="@+id/menuItemCall" />
 </LinearLayout>
