@@ -4,6 +4,8 @@ package todolist.huji.ac.il.todolistmanager;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -51,55 +54,25 @@ public class TodoListManagerActivity extends AppCompatActivity {
     Context thisContext;
     final static int REQUEST_CODE_ADD_MENU = 80;
     final static String CALL_ITEM_PREF = "Call ";
+    final static String DB_ITEM_TBL_NAME = "todo";
 
-    public class MyAdapter extends ArrayAdapter<String> {
-        Context context;
-        public ArrayList<String> myItemArray;
-        public ArrayList<Date> myDueDateArray;
-
-        public MyAdapter(Context context, ArrayList<String> items, ArrayList<Date> dueDates) {
-            super(context, R.layout.activity_todo_list_manager, items);
-            this.context = context;
-            this.myItemArray = items;
-            this.myDueDateArray = dueDates;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            if(convertView == null){
-                //We must create a View:
-                convertView = inflater.inflate(R.layout.row, parent, false);
-            }
-            TextView txtTodoTitle = (TextView)convertView.findViewById(R.id.txtTodoTitle);
-            txtTodoTitle.setText(myItemArray.get(position));
-            TextView txtTodoDueDate = (TextView)convertView.findViewById(R.id.txtTodoDueDate);
-            Date dueDate = myDueDateArray.get(position);
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            String formattedDate = dateFormat.format(dueDate);
-            txtTodoDueDate.setText(formattedDate);
-            Date today = new Date();
-            if (today.after(dueDate)) {
-                txtTodoTitle.setTextColor(Color.RED);
-            }
-            else {
-                txtTodoTitle.setTextColor(Color.BLUE);
-            }
-            return convertView;
-        }
-
-    }
-    public ArrayList<String> myItemArray = new ArrayList<>();
-    public ArrayList<Date> myDueDateArray = new ArrayList<>();
+    public ArrayList<String> myItemArray;
+    public ArrayList<Date> myDueDateArray;
 
     public MyAdapter adapter;
     ListView listView;
+    TodoDBHelper DBHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         thisContext = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo_list_manager);
+
+        DBHelper = new TodoDBHelper(this);
+        myItemArray = DBHelper.getStringListFromDB(DB_ITEM_TBL_NAME);
+        myDueDateArray = DBHelper.getDateListFromDB(DB_ITEM_TBL_NAME);
+
         adapter = new MyAdapter(getApplicationContext(), myItemArray, myDueDateArray);
         listView = (ListView)findViewById(R.id.listView);
         listView.setAdapter(adapter);
@@ -135,8 +108,9 @@ public class TodoListManagerActivity extends AppCompatActivity {
                 deleteBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        adapter.myItemArray.remove(position);
-                        adapter.myDueDateArray.remove(position);
+                        String itemDel = adapter.myItemArray.remove(position);
+                        Date dateDel = adapter.myDueDateArray.remove(position);
+                        DBHelper.deleteItemFromDB(itemDel, dateDel);
                         adapter.notifyDataSetChanged();
                         inviteBuilder.dismiss();
                     }
@@ -180,6 +154,7 @@ public class TodoListManagerActivity extends AppCompatActivity {
                 Date newItemDueDate = (Date)data.getSerializableExtra("newItemDueDate");
                 adapter.myItemArray.add(newItemData);
                 adapter.myDueDateArray.add(newItemDueDate);
+                DBHelper.addItemToDB(newItemData, newItemDueDate);
                 adapter.notifyDataSetChanged();
             }
         }
